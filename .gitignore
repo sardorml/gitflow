@@ -1,0 +1,7 @@
+node_modules/
+playground/
+remote.git/
+.teammate-*/
+.wrangler/
+.state-*.json
+.DS_Store

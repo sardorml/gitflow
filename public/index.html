@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gitflow Playground — Git School</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<link rel="stylesheet" href="/vendor/driver/driver.css">
+<link rel="stylesheet" href="/styles.css">
+<script src="/vendor/marked/marked.min.js" defer></script>
+<script src="/vendor/driver/driver.js.iife.js" defer></script>
+</head>
+<body>
+
+<header id="titlebar">
+  <div class="tb-traffic"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span></div>
+  <div class="tb-title">playground — Gitflow Playground · Git School</div>
+  <div class="tb-actions">
+    <button id="lessons-btn" class="tb-btn tb-btn-accent" title="Open the lesson catalog">🎓 Lessons</button>
+    <button id="reset-btn" class="tb-btn" title="Wipe the playground repo & local remote">↺ Reset</button>
+  </div>
+</header>
+
+<div id="shell">
+
+  <nav id="activitybar">
+    <button class="ab-btn active" data-view="explorer" title="Explorer (files)">
+      <svg viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </button>
+    <button class="ab-btn" data-view="scm" title="Source Control">
+      <svg viewBox="0 0 24 24"><circle cx="7" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 8.2v7.6M17 11.2c0 3-3 3.3-7 3.8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span id="ab-scm-badge" class="ab-badge" hidden></span>
+    </button>
+  </nav>
+
+  <aside id="sidebar">
+    <section id="view-explorer" class="sb-view">
+      <div class="sb-title">Explorer
+        <span class="sb-title-actions">
+          <button id="new-file-btn" class="icon-btn" title="New file"><svg viewBox="0 0 16 16"><path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6L9 2z" fill="none" stroke="currentColor"/><path d="M9 2v4h4M6.5 9.5h3M8 8v3" fill="none" stroke="currentColor"/></svg></button>
+          <button id="new-folder-btn" class="icon-btn" title="New folder"><svg viewBox="0 0 16 16"><path d="M2 4a1 1 0 0 1 1-1h3l1.5 2H13a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4z" fill="none" stroke="currentColor"/><path d="M8 8v3M6.5 9.5h3" fill="none" stroke="currentColor"/></svg></button>
+        </span>
+      </div>
+      <div class="sb-section-label">playground</div>
+      <div id="new-entry-row" hidden><input id="new-entry-input" spellcheck="false" autocomplete="off" placeholder="filename.md"></div>
+      <div id="file-tree" role="tree"></div>
+      <div class="sb-hint">Any file type works — <b>.md</b> files get a live preview. Everything here is inside the sandboxed repo.</div>
+    </section>
+
+    <section id="view-scm" class="sb-view" hidden>
+      <div class="sb-title">Source Control</div>
+      <div id="scm-commit-row">
+        <input id="scm-msg" placeholder="Message (⌘Enter to commit)" spellcheck="false" autocomplete="off">
+        <button id="scm-commit-btn" title="Commit staged changes">✓ Commit</button>
+      </div>
+      <div class="scm-group" id="cell-staged">
+        <div class="scm-group-head">Staged Changes <span class="scm-count" id="scm-staged-count">0</span></div>
+        <div class="scm-list" id="scm-staged"></div>
+      </div>
+      <div class="scm-group" id="cell-working">
+        <div class="scm-group-head">Changes <span class="scm-count" id="scm-changes-count">0</span></div>
+        <div class="scm-list" id="scm-changes"></div>
+      </div>
+      <div class="sb-hint">Every button here runs a real git command — watch it echo in the terminal.</div>
+    </section>
+  </aside>
+
+  <main id="maincol">
+
+    <section id="graph-pane">
+      <div class="panel-head">
+        <span class="ph-label">Git Graph</span>
+        <span class="ph-hint">every command redraws this — watch it move</span>
+        <span class="spacer"></span>
+        <span id="progress-banner" class="banner" hidden></span>
+        <span id="stash-badge" class="stash-badge" hidden></span>
+      </div>
+      <div id="graph-scroll">
+        <div id="graph-content">
+          <svg id="graph-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="chips"></div>
+        </div>
+        <div id="graph-empty" class="graph-empty" hidden></div>
+      </div>
+    </section>
+
+    <section id="editor-pane">
+      <div id="tabstrip-row">
+        <div id="tabstrip"></div>
+        <div id="editor-actions">
+          <button id="preview-toggle" class="icon-btn" title="Toggle markdown preview" hidden>
+            <svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="10" rx="1" fill="none" stroke="currentColor"/><path d="M8 3v10" stroke="currentColor"/></svg>
+          </button>
+          <button id="save-btn" class="tb-btn tb-btn-accent" title="Save active file (⌘S)">Save</button>
+        </div>
+      </div>
+      <div id="editor-host">
+        <textarea id="editor" spellcheck="false" autocomplete="off" hidden></textarea>
+        <div id="preview" class="md" hidden></div>
+        <div id="editor-empty">
+          <div class="ee-logo">🌿</div>
+          <div class="ee-rows">
+            <span>New file</span><kbd>explorer → ✎</kbd>
+            <span>Save</span><kbd>⌘S</kbd>
+            <span>Lessons</span><kbd>🎓 in the title bar</kbd>
+            <span>Terminal help</span><kbd>help</kbd>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="terminal-pane">
+      <div class="panel-head term-head">
+        <span class="ph-label ph-active">Terminal</span>
+        <span class="ph-hint">real git · type <b>help</b> for a guided tour</span>
+      </div>
+      <div id="term-out"></div>
+      <div id="term-input-row">
+        <span id="term-prompt"></span>
+        <input id="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="git terminal input">
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer id="statusbar">
+  <span id="sb-branch" title="Current HEAD">⎇ —</span>
+  <span id="sb-state" hidden></span>
+  <span id="sb-changes" title="Working tree changes" hidden></span>
+  <span class="spacer"></span>
+  <span class="sb-plain">Gitflow Playground</span>
+</footer>
+
+<div id="catalog" hidden></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

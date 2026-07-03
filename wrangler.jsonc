@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gitflow-playground",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-06-01",
+
+  // Frontend served instantly from the edge; only /api/* wakes a container.
+  "assets": {
+    "directory": "./public"
+  },
+
+  "containers": [
+    {
+      "class_name": "PlaygroundContainer",
+      "image": "./Dockerfile",
+      "instance_type": "lite",
+      "max_instances": 20
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "PLAYGROUND",
+        "class_name": "PlaygroundContainer"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["PlaygroundContainer"]
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
