@@ -1,6 +1,7 @@
 node_modules
 playground
 remote.git
+.env
 .teammate-*
 worker
 wrangler.jsonc
@@ -8,3 +9,5 @@ wrangler.jsonc
 .gitignore
 .DS_Store
 README.md
+sessions
+render.yaml

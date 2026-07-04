@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gitflow Playground — Git School</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<script>document.documentElement.dataset.theme = localStorage.getItem('gitflow:theme') || 'dark-modern';</script>
 <link rel="stylesheet" href="/vendor/driver/driver.css">
 <link rel="stylesheet" href="/styles.css">
 <script src="/vendor/marked/marked.min.js" defer></script>
@@ -16,6 +17,17 @@
   <div class="tb-traffic"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span></div>
   <div class="tb-title">playground — Gitflow Playground · Git School</div>
   <div class="tb-actions">
+    <select id="theme-select" class="tb-select" title="Color theme" aria-label="Color theme">
+      <option value="dark-modern">Dark Modern</option>
+      <option value="light-modern">Light Modern</option>
+      <option value="monokai">Monokai</option>
+      <option value="dracula">Dracula</option>
+      <option value="one-dark-pro">One Dark Pro</option>
+      <option value="github-dark">GitHub Dark</option>
+      <option value="nord">Nord</option>
+      <option value="tokyo-night">Tokyo Night</option>
+      <option value="solarized-light">Solarized Light</option>
+    </select>
     <button id="lessons-btn" class="tb-btn tb-btn-accent" title="Open the lesson catalog">🎓 Lessons</button>
     <button id="reset-btn" class="tb-btn" title="Wipe the playground repo & local remote">↺ Reset</button>
   </div>
@@ -67,23 +79,6 @@
 
   <main id="maincol">
 
-    <section id="graph-pane">
-      <div class="panel-head">
-        <span class="ph-label">Git Graph</span>
-        <span class="ph-hint">every command redraws this — watch it move</span>
-        <span class="spacer"></span>
-        <span id="progress-banner" class="banner" hidden></span>
-        <span id="stash-badge" class="stash-badge" hidden></span>
-      </div>
-      <div id="graph-scroll">
-        <div id="graph-content">
-          <svg id="graph-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div id="chips"></div>
-        </div>
-        <div id="graph-empty" class="graph-empty" hidden></div>
-      </div>
-    </section>
-
     <section id="editor-pane">
       <div id="tabstrip-row">
         <div id="tabstrip"></div>
@@ -106,6 +101,23 @@
             <span>Terminal help</span><kbd>help</kbd>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="graph-pane">
+      <div class="panel-head">
+        <span class="ph-label">Git Graph</span>
+        <span class="ph-hint">every command redraws this — watch it move</span>
+        <span class="spacer"></span>
+        <span id="progress-banner" class="banner" hidden></span>
+        <span id="stash-badge" class="stash-badge" hidden></span>
+      </div>
+      <div id="graph-scroll">
+        <div id="graph-content">
+          <svg id="graph-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="chips"></div>
+        </div>
+        <div id="graph-empty" class="graph-empty" hidden></div>
       </div>
     </section>
 
@@ -133,6 +145,7 @@
 </footer>
 
 <div id="catalog" hidden></div>
+<div id="chat"></div>
 
 <script type="module" src="/js/app.js"></script>
 </body>

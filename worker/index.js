@@ -10,6 +10,13 @@ import { Container } from '@cloudflare/containers';
 export class PlaygroundContainer extends Container {
   defaultPort = 3333;
   sleepAfter = '15m';
+
+  constructor(ctx, env) {
+    super(ctx, env);
+    // Forward the Groq key (set via `npx wrangler secret put GROQ_API_KEY`)
+    // into the container so the chat assistant works in the cloud too.
+    this.envVars = { GROQ_API_KEY: env.GROQ_API_KEY || '' };
+  }
 }
 
 const COOKIE = 'gfp_sid';

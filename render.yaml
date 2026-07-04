@@ -1,0 +1,14 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploy: Render dashboard → New + → Blueprint → point it at this repo,
+# or use the "Deploy to Render" button in the README.
+services:
+  - type: web
+    name: gitflow-playground
+    runtime: docker # uses the repo's Dockerfile (node + git)
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: MULTI_SESSION # every visitor gets an isolated sandbox repo
+        value: "1"
+      - key: GROQ_API_KEY # chat assistant — you'll be prompted for the value
+        sync: false

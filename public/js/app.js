@@ -4,6 +4,7 @@ import { initEditor } from './editor.js';
 import { initExplorer } from './explorer.js';
 import { initSCM } from './sourcecontrol.js';
 import { initSchool } from './school.js';
+import { initChat } from './chat.js';
 import { escapeHtml } from './ansi.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -181,6 +182,18 @@ school = initSchool({
 });
 
 $('#lessons-btn').addEventListener('click', () => school.openCatalog());
+
+const themeSelect = $('#theme-select');
+themeSelect.value = document.documentElement.dataset.theme || 'dark-modern';
+themeSelect.addEventListener('change', () => {
+  document.documentElement.dataset.theme = themeSelect.value;
+  localStorage.setItem('gitflow:theme', themeSelect.value);
+});
+
+initChat($('#chat'), {
+  send: (messages) => api('/api/chat', { messages }),
+  startTour: (tour) => school.runTour(tour),
+});
 
 $('#reset-btn').addEventListener('click', async () => {
   if (!confirm('Wipe the playground repo and the local remote, and start fresh?')) return;

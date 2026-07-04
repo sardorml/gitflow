@@ -5,3 +5,5 @@ remote.git/
 .wrangler/
 .state-*.json
 .DS_Store
+.env
+sessions/

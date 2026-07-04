@@ -2,6 +2,7 @@
 // Lessons come from lessons.js; completion is tracked in localStorage.
 
 import { LESSONS, LEVELS } from './lessons.js';
+import { celebrate } from './confetti.js';
 import { escapeHtml } from './ansi.js';
 
 const DONE_KEY = 'gitflow:school-done';
@@ -129,8 +130,11 @@ export function initSchool({ runSetup }) {
       onDestroyed: () => {
         const finished = activeLesson && lastIndex >= activeLesson.steps.length - 1;
         if (finished) {
-          markDone(activeLesson.id);
-          setTimeout(openCatalog, 600);
+          celebrate((activeLesson.title || '').replace(/^\d+\s·\s/, ''));
+          if (activeLesson.id) { // AI tours have no id: no tracking, no catalog
+            markDone(activeLesson.id);
+            setTimeout(openCatalog, 2200); // let the confetti land first
+          }
         }
         activeLesson = null;
         driverObj = null;
@@ -157,10 +161,52 @@ export function initSchool({ runSetup }) {
     if (step?.waitCmd && code === 0 && step.waitCmd.test(command.trim())) driverObj.moveNext();
   }
 
+  /* ————————————————————————————— AI-generated tours (from the chat) */
+
+  const AI_EL = { terminal: '#terminal-pane', editor: '#editor-pane', graph: '#graph-pane', scm: '#cell-working' };
+  const AI_SIDE = { terminal: 'top', editor: 'bottom', graph: 'bottom', scm: 'right' };
+
+  // AI text may only carry harmless inline markup
+  function sanitizeAi(text) {
+    return escapeHtml(text)
+      .replace(/&lt;(\/?)(b|i|code|br)&gt;/gi, '<$1$2>');
+  }
+
+  function fromAiStep(s) {
+    if (!s || !s.title) return null;
+    let desc = sanitizeAi(s.desc || '');
+    if (s.cmd) desc += `<div class="tour-cmd">${escapeHtml(s.cmd)}</div>`;
+    let waitCmd = null;
+    if (s.advanceOn) {
+      try { waitCmd = new RegExp(s.advanceOn, 'i'); } catch { /* bad regex from the model */ }
+    }
+    if (!waitCmd && s.cmd) {
+      const toks = s.cmd.trim().split(/\s+/).slice(0, 2)
+        .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      waitCmd = new RegExp('^' + toks.join('\\s+'), 'i');
+    }
+    return {
+      el: AI_EL[s.el] || null,
+      side: AI_SIDE[s.el],
+      title: sanitizeAi(s.title),
+      desc,
+      hint: waitCmd ? 'continues when you run it' : undefined,
+      waitCmd: waitCmd || undefined,
+    };
+  }
+
+  function runTour(tour) {
+    const steps = (tour?.steps || []).map(fromAiStep).filter(Boolean);
+    if (!steps.length) return;
+    closeCatalog();
+    drive({ id: null, title: tour.title || 'Guided tour', steps });
+  }
+
   return {
     openCatalog,
     onState,
     onCommand,
+    runTour,
     autoOpen: () => setTimeout(openCatalog, 700),
   };
 }

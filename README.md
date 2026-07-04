@@ -27,3 +27,15 @@ npm start          # → http://localhost:3333
 - Guardrails: no `-C`/`--git-dir`/`--work-tree`, no `config --global`, no interactive editors (friendly hints instead), 15s command timeout.
 
 Type `help` in the terminal for a guided tour, and use **Reset playground** (header) to start over. `playground/` and `remote.git/` are disposable and gitignored.
+
+## Deploy on Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/sardorml/gitflow)
+
+The repo ships a `render.yaml` blueprint that runs the Dockerfile (Node 22 + git) as a web service:
+
+1. Click the button above (or Render dashboard → **New + → Blueprint** → this repo).
+2. When prompted, paste your `GROQ_API_KEY` (from [console.groq.com](https://console.groq.com)) — leave it empty to run without the chat assistant.
+3. Deploy. Render injects `PORT` automatically; the health check hits `/healthz`.
+
+The blueprint sets `MULTI_SESSION=1`, so **every visitor gets their own isolated sandbox** (a `gfp_sid` cookie maps to a private `playground/` + `remote.git` pair). Idle sandboxes are wiped after an hour, and everything is ephemeral by design — a redeploy or restart starts everyone fresh, which is exactly what you want for a learning playground. On the free plan the service also spins down after ~15 minutes of inactivity, so the first visit after a quiet spell takes a few seconds to wake.
