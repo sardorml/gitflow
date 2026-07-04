@@ -118,7 +118,7 @@ input { font-family: inherit; color: inherit; }
   transition: background .12s;
 }
 .tb-btn:hover { background: var(--bg-active); }
-.tb-gh { display: inline-flex; align-items: center; text-decoration: none; padding: 3px 7px; }
+.tb-gh { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; padding: 3px 10px 3px 8px; }
 .tb-gh svg { display: block; }
 .tb-btn-accent { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 .tb-btn-accent:hover { background: var(--accent-hover); }
